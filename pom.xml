@@ -14,7 +14,7 @@
 
     <groupId>com.openai</groupId>
     <artifactId>agent-watcher</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>OpenAI Agent Watcher</name>
     <description>Service for monitoring OpenAI agent telemetry and observability</description>
 
