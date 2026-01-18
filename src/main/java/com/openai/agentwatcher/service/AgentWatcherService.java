@@ -8,6 +8,10 @@ import com.openai.agentwatcher.repository.AgentActionRepository;
 import com.openai.agentwatcher.repository.AgentSessionRepository;
 import com.openai.agentwatcher.repository.AgentTelemetryRepository;
 import com.openai.agentwatcher.repository.AgentThoughtRepository;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,27 +43,50 @@ public class AgentWatcherService {
     @Autowired
     private AgentTelemetryRepository telemetryRepository;
 
+    @Autowired
+    private Tracer tracer;
+
+    @Autowired
+    private MeterRegistry meterRegistry;
+
     /**
      * Start a new agent session
      */
     @Transactional
     public AgentSession startSession(String agentId, String userQuery) {
-        String sessionId = UUID.randomUUID().toString();
+        Span span = tracer.spanBuilder("startSession")
+                .setAttribute("agent.id", agentId)
+                .startSpan();
         
-        AgentSession session = AgentSession.builder()
-                .sessionId(sessionId)
-                .agentId(agentId)
-                .userQuery(userQuery)
-                .sessionStatus("ACTIVE")
-                .startTime(LocalDateTime.now())
-                .totalThoughts(0)
-                .totalActions(0)
-                .build();
-        
-        session = sessionRepository.save(session);
-        log.info("Started new agent session: {} for agent: {}", sessionId, agentId);
-        
-        return session;
+        try (Scope scope = span.makeCurrent()) {
+            String sessionId = UUID.randomUUID().toString();
+            
+            AgentSession session = AgentSession.builder()
+                    .sessionId(sessionId)
+                    .agentId(agentId)
+                    .userQuery(userQuery)
+                    .sessionStatus("ACTIVE")
+                    .startTime(LocalDateTime.now())
+                    .totalThoughts(0)
+                    .totalActions(0)
+                    .build();
+            
+            session = sessionRepository.save(session);
+            log.info("Started new agent session: {} for agent: {}", sessionId, agentId);
+            
+            // Track metric
+            meterRegistry.counter("agent.session.started", "agent_id", agentId).increment();
+            
+            span.setAttribute("session.id", sessionId);
+            span.addEvent("Session created successfully");
+            
+            return session;
+        } catch (Exception e) {
+            span.recordException(e);
+            throw e;
+        } finally {
+            span.end();
+        }
     }
 
     /**
@@ -68,27 +95,50 @@ public class AgentWatcherService {
     @Transactional
     public AgentThought logThought(String agentId, String sessionId, String thoughtType, 
                                    String thoughtContent, Double confidenceScore) {
-        AgentThought thought = AgentThought.builder()
-                .agentId(agentId)
-                .sessionId(sessionId)
-                .thoughtType(thoughtType)
-                .thoughtContent(thoughtContent)
-                .confidenceScore(confidenceScore)
-                .timestamp(LocalDateTime.now())
-                .build();
+        Span span = tracer.spanBuilder("logThought")
+                .setAttribute("agent.id", agentId)
+                .setAttribute("session.id", sessionId)
+                .setAttribute("thought.type", thoughtType)
+                .startSpan();
         
-        thought = thoughtRepository.save(thought);
-        
-        // Update session thought count
-        sessionRepository.findBySessionId(sessionId).ifPresent(session -> {
-            session.incrementThoughts();
-            sessionRepository.save(session);
-        });
-        
-        log.info("Logged thought [{}] for session {}: {}", 
-                thoughtType, sessionId, thoughtContent.substring(0, Math.min(50, thoughtContent.length())));
-        
-        return thought;
+        try (Scope scope = span.makeCurrent()) {
+            AgentThought thought = AgentThought.builder()
+                    .agentId(agentId)
+                    .sessionId(sessionId)
+                    .thoughtType(thoughtType)
+                    .thoughtContent(thoughtContent)
+                    .confidenceScore(confidenceScore)
+                    .timestamp(LocalDateTime.now())
+                    .build();
+            
+            thought = thoughtRepository.save(thought);
+            
+            // Update session thought count
+            sessionRepository.findBySessionId(sessionId).ifPresent(session -> {
+                session.incrementThoughts();
+                sessionRepository.save(session);
+            });
+            
+            log.info("Logged thought [{}] for session {}: {}", 
+                    thoughtType, sessionId, thoughtContent.substring(0, Math.min(50, thoughtContent.length())));
+            
+            // Track metrics
+            meterRegistry.counter("agent.thought.logged", 
+                    "agent_id", agentId, 
+                    "thought_type", thoughtType).increment();
+            
+            if (confidenceScore != null) {
+                meterRegistry.gauge("agent.thought.confidence", confidenceScore);
+            }
+            
+            span.addEvent("Thought logged successfully");
+            return thought;
+        } catch (Exception e) {
+            span.recordException(e);
+            throw e;
+        } finally {
+            span.end();
+        }
     }
 
     /**
