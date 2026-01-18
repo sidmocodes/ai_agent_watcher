@@ -10,6 +10,9 @@ A Spring Boot service for monitoring and logging OpenAI agent telemetry and obse
 - **Telemetry Collection**: Gather performance metrics like latency, token usage, and costs
 - **REST API**: Comprehensive endpoints for submitting and querying agent data
 - **Real-time Streaming**: Support for streaming agent events from OpenAI
+- **Azure Application Insights Integration**: Full observability with distributed tracing
+- **OpenTelemetry Support**: Vendor-neutral instrumentation for traces and metrics
+- **Database Migrations**: Liquibase for versioned schema management
 
 ## Architecture
 
@@ -209,9 +212,13 @@ Logs are written to:
 
 - WebSocket support for real-time updates
 - Advanced analytics and visualization
-- Integration with monitoring platforms (Prometheus, Grafana)
 - Support for multiple LLM providers
 - Enhanced search and filtering capabilities
+
+## Documentation
+
+- [Liquibase Database Migrations](README-LIQUIBASE.md)
+- [Azure Application Insights & OpenTelemetry Setup](README-AZURE-OPENTELEMETRY.md)
 
 ## License
 
