@@ -215,4 +215,4 @@ Logs are written to:
 
 ## License
 
-This project is provided as-is for monitoring and observability purposes.
+Apache 2.0 License
