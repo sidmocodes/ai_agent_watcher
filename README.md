@@ -1393,7 +1393,6 @@ logging.file.max-history=10
 
 - [Liquibase Database Migrations](README-LIQUIBASE.md)
 - [Azure Application Insights & OpenTelemetry Setup](README-AZURE-OPENTELEMETRY.md)
-- [Technical Blog Post](BLOG.md)
 
 ## Contributing
 
