@@ -4,7 +4,8 @@ import com.openai.agentwatcher.model.AgentAction;
 import com.openai.agentwatcher.model.AgentSession;
 import com.openai.agentwatcher.model.AgentThought;
 import com.openai.agentwatcher.service.AgentWatcherService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,9 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/sessions")
-@Slf4j
 public class AgentSessionController {
+
+    private static final Logger log = LoggerFactory.getLogger(AgentSessionController.class);
 
     @Autowired
     private AgentWatcherService watcherService;

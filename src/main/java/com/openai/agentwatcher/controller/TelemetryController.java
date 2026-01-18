@@ -1,7 +1,8 @@
 package com.openai.agentwatcher.controller;
 
 import com.openai.agentwatcher.service.AgentWatcherService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,9 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/telemetry")
-@Slf4j
 public class TelemetryController {
+
+    private static final Logger log = LoggerFactory.getLogger(TelemetryController.class);
 
     @Autowired
     private AgentWatcherService watcherService;

@@ -1,6 +1,7 @@
 package com.openai.agentwatcher.service;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,9 @@ import java.util.Map;
  * Service for connecting to OpenAI API and streaming agent events
  */
 @Service
-@Slf4j
 public class OpenAIStreamService {
+
+    private static final Logger log = LoggerFactory.getLogger(OpenAIStreamService.class);
 
     @Value("${openai.api.key:}")
     private String apiKey;
@@ -30,6 +32,7 @@ public class OpenAIStreamService {
     public OpenAIStreamService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.build();
     }
+    
 
     /**
      * Stream agent events from OpenAI API
@@ -46,7 +49,7 @@ public class OpenAIStreamService {
                 .retrieve()
                 .bodyToFlux(new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {})
                 .doOnNext(event -> {
-                    OpenAIStreamService.log.debug("Received event: {}", event);
+                    log.debug("Received event: {}", event);
                     processEvent(agentId, sessionId, event);
                 })
                 .doOnError(error -> log.error("Error streaming events", error))

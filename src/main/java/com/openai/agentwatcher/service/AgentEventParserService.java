@@ -2,7 +2,8 @@ package com.openai.agentwatcher.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,9 @@ import java.util.Map;
  * Extracts meaningful information from telemetry data
  */
 @Service
-@Slf4j
 public class AgentEventParserService {
+
+    private static final Logger log = LoggerFactory.getLogger(AgentEventParserService.class);
 
     @Autowired
     private AgentWatcherService watcherService;

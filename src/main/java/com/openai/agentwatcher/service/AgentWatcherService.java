@@ -8,7 +8,8 @@ import com.openai.agentwatcher.repository.AgentActionRepository;
 import com.openai.agentwatcher.repository.AgentSessionRepository;
 import com.openai.agentwatcher.repository.AgentTelemetryRepository;
 import com.openai.agentwatcher.repository.AgentThoughtRepository;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,9 @@ import java.util.UUID;
  * Captures thoughts, actions, and telemetry data
  */
 @Service
-@Slf4j
 public class AgentWatcherService {
+
+    private static final Logger log = LoggerFactory.getLogger(AgentWatcherService.class);
 
     @Autowired
     private AgentThoughtRepository thoughtRepository;
