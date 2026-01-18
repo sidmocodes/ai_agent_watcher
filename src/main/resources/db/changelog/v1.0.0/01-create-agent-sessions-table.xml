@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="01-create-agent-sessions-table" author="agent-watcher">
+        <comment>Create agent_sessions table to track agent execution sessions</comment>
+        
+        <createTable tableName="agent_sessions">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_agent_sessions"/>
+            </column>
+            
+            <column name="session_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_agent_sessions_session_id"/>
+            </column>
+            
+            <column name="agent_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            
+            <column name="user_query" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="session_status" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="start_time" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="end_time" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="total_thoughts" type="INTEGER">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="total_actions" type="INTEGER">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="final_response" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        
+        <rollback>
+            <dropTable tableName="agent_sessions"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

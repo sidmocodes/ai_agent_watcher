@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="05-create-indexes" author="agent-watcher">
+        <comment>Create indexes for performance optimization on frequently queried columns</comment>
+        
+        <!-- Indexes for agent_sessions -->
+        <createIndex indexName="idx_agent_sessions_agent_id" tableName="agent_sessions">
+            <column name="agent_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_sessions_status" tableName="agent_sessions">
+            <column name="session_status"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_sessions_start_time" tableName="agent_sessions">
+            <column name="start_time"/>
+        </createIndex>
+        
+        <!-- Indexes for agent_thoughts -->
+        <createIndex indexName="idx_agent_thoughts_session_id" tableName="agent_thoughts">
+            <column name="session_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_thoughts_agent_id" tableName="agent_thoughts">
+            <column name="agent_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_thoughts_timestamp" tableName="agent_thoughts">
+            <column name="timestamp"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_thoughts_type" tableName="agent_thoughts">
+            <column name="thought_type"/>
+        </createIndex>
+        
+        <!-- Indexes for agent_actions -->
+        <createIndex indexName="idx_agent_actions_session_id" tableName="agent_actions">
+            <column name="session_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_actions_agent_id" tableName="agent_actions">
+            <column name="agent_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_actions_status" tableName="agent_actions">
+            <column name="status"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_actions_start_time" tableName="agent_actions">
+            <column name="start_time"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_actions_type" tableName="agent_actions">
+            <column name="action_type"/>
+        </createIndex>
+        
+        <!-- Indexes for agent_telemetry -->
+        <createIndex indexName="idx_agent_telemetry_session_id" tableName="agent_telemetry">
+            <column name="session_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_telemetry_agent_id" tableName="agent_telemetry">
+            <column name="agent_id"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_telemetry_metric_name" tableName="agent_telemetry">
+            <column name="metric_name"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_telemetry_timestamp" tableName="agent_telemetry">
+            <column name="timestamp"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_telemetry_type" tableName="agent_telemetry">
+            <column name="metric_type"/>
+        </createIndex>
+        
+        <!-- Composite indexes for common query patterns -->
+        <createIndex indexName="idx_agent_thoughts_session_timestamp" tableName="agent_thoughts">
+            <column name="session_id"/>
+            <column name="timestamp"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_agent_actions_session_start_time" tableName="agent_actions">
+            <column name="session_id"/>
+            <column name="start_time"/>
+        </createIndex>
+        
+        <rollback>
+            <!-- Agent Sessions Indexes -->
+            <dropIndex indexName="idx_agent_sessions_agent_id" tableName="agent_sessions"/>
+            <dropIndex indexName="idx_agent_sessions_status" tableName="agent_sessions"/>
+            <dropIndex indexName="idx_agent_sessions_start_time" tableName="agent_sessions"/>
+            
+            <!-- Agent Thoughts Indexes -->
+            <dropIndex indexName="idx_agent_thoughts_session_id" tableName="agent_thoughts"/>
+            <dropIndex indexName="idx_agent_thoughts_agent_id" tableName="agent_thoughts"/>
+            <dropIndex indexName="idx_agent_thoughts_timestamp" tableName="agent_thoughts"/>
+            <dropIndex indexName="idx_agent_thoughts_type" tableName="agent_thoughts"/>
+            <dropIndex indexName="idx_agent_thoughts_session_timestamp" tableName="agent_thoughts"/>
+            
+            <!-- Agent Actions Indexes -->
+            <dropIndex indexName="idx_agent_actions_session_id" tableName="agent_actions"/>
+            <dropIndex indexName="idx_agent_actions_agent_id" tableName="agent_actions"/>
+            <dropIndex indexName="idx_agent_actions_status" tableName="agent_actions"/>
+            <dropIndex indexName="idx_agent_actions_start_time" tableName="agent_actions"/>
+            <dropIndex indexName="idx_agent_actions_type" tableName="agent_actions"/>
+            <dropIndex indexName="idx_agent_actions_session_start_time" tableName="agent_actions"/>
+            
+            <!-- Agent Telemetry Indexes -->
+            <dropIndex indexName="idx_agent_telemetry_session_id" tableName="agent_telemetry"/>
+            <dropIndex indexName="idx_agent_telemetry_agent_id" tableName="agent_telemetry"/>
+            <dropIndex indexName="idx_agent_telemetry_metric_name" tableName="agent_telemetry"/>
+            <dropIndex indexName="idx_agent_telemetry_timestamp" tableName="agent_telemetry"/>
+            <dropIndex indexName="idx_agent_telemetry_type" tableName="agent_telemetry"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="04-create-agent-telemetry-table" author="agent-watcher">
+        <comment>Create agent_telemetry table to capture performance metrics and monitoring data</comment>
+        
+        <createTable tableName="agent_telemetry">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_agent_telemetry"/>
+            </column>
+            
+            <column name="agent_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            
+            <column name="session_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            
+            <column name="metric_name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="metric_value" type="DOUBLE">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="metric_unit" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="metric_type" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="tags" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        
+        <rollback>
+            <dropTable tableName="agent_telemetry"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

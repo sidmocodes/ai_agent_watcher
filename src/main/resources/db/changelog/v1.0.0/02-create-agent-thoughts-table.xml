@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="02-create-agent-thoughts-table" author="agent-watcher">
+        <comment>Create agent_thoughts table to capture agent reasoning process</comment>
+        
+        <createTable tableName="agent_thoughts">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_agent_thoughts"/>
+            </column>
+            
+            <column name="agent_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            
+            <column name="session_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            
+            <column name="thought_type" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="thought_content" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="confidence_score" type="DOUBLE">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="parent_thought_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="metadata" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint
+                baseTableName="agent_thoughts"
+                baseColumnNames="parent_thought_id"
+                constraintName="fk_agent_thoughts_parent"
+                referencedTableName="agent_thoughts"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+        
+        <rollback>
+            <dropTable tableName="agent_thoughts"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
